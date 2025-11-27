@@ -5,18 +5,16 @@ phases:
     runtime-versions:
       java: corretto11
     commands:
-      - echo "Installing..."
-  pre_build:
-    commands:
-      - echo "Pre-build steps..."
+      - echo "Using Maven wrapper"
+      - chmod +x mvnw
   build:
     commands:
-      - echo "Building with Maven..."
-      - mvn -B -e -DskipTests package
+      - echo "Building application..."
+      - ./mvnw -B -DskipTests package
   post_build:
     commands:
-      - echo "Packaging for Elastic Beanstalk..."
-      # copy jar to root application.jar (assumes target/*.jar produced)
+      - echo "Preparing artifact..."
+      - ls -l target
       - JAR_FILE=$(ls target/*.jar | head -n 1)
       - cp "$JAR_FILE" application.jar
       - zip -r application.zip application.jar Procfile
