@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+    commands:
+      - echo "Installing..."
+  pre_build:
+    commands:
+      - echo "Pre-build steps..."
+  build:
+    commands:
+      - echo "Building with Maven..."
+      - mvn -B -e -DskipTests package
+  post_build:
+    commands:
+      - echo "Packaging for Elastic Beanstalk..."
+      # copy jar to root application.jar (assumes target/*.jar produced)
+      - JAR_FILE=$(ls target/*.jar | head -n 1)
+      - cp "$JAR_FILE" application.jar
+      - zip -r application.zip application.jar Procfile
+
+artifacts:
+  files:
+    - application.zip
+  discard-paths: yes
