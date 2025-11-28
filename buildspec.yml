@@ -3,23 +3,23 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto11
+      java: corretto17
     commands:
-      - echo "Using Maven wrapper"
-      - chmod +x mvnw
+      - echo "Installing packages..."
+
+  pre_build:
+    commands:
+      - echo "Starting Maven build..."
+      - mvn clean install -DskipTests
+
   build:
     commands:
-      - echo "Building application..."
-      - ./mvnw -B -DskipTests package
-  post_build:
-    commands:
-      - echo "Preparing artifact..."
-      - ls -l target
-      - JAR_FILE=$(ls target/*.jar | head -n 1)
-      - cp "$JAR_FILE" application.jar
-      - zip -r application.zip application.jar Procfile
+      - echo "Packaging build artifact..."
+      # Copy jar with fixed name
+      - cp target/*.jar application.jar
 
 artifacts:
   files:
-    - application.zip
+    - application.jar
+    - Procfile
   discard-paths: yes
